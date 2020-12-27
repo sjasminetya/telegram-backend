@@ -30,7 +30,7 @@ exports.register = async (req, res, next) => {
                 password: hash,
                 bio,
                 phoneNumber,
-                photoProfile: `${process.env.BASE_URL}/upload/avatar.jpg`,
+                photoProfile: `${process.env.BASE_URL_IMG}/upload/avatar.jpg`,
                 isActive: 1,
                 lat,
                 lng

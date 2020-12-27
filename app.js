@@ -16,6 +16,7 @@ const PORT = process.env.PORT
 const cors = require('cors')
 const routerMain = require('./src/router/index')
 const {insertMessage} = require('./src/models/message')
+const { v4: uuidv4 } = require('uuid')
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -28,23 +29,35 @@ io.on('connection', (socket) => {
     console.log('connection', socket.id)
  
     socket.on('initialUser', (data) => {
-        console.log(data.senderId)
-        socket.join('senderId:'+data.senderId)
-        socket.broadcast.to('senderId:'+data.senderId).emit('kirimKembali', `Both: ${data.senderId} join chat`)
-
-        // io.emit('initialUser', name)
+        console.log(data)
+        console.log('id user login ' + data.senderId)
+        socket.join(data.senderId)
+        socket.broadcast.to(data.senderId).emit('kirimkembali', `Both: ${data.name} join chat ${data.senderId}`)
     })
 
     socket.on('receiverMessage', (data) => {
         console.log(data)
+        const id = uuidv4()
         const formatMessage = {
+            id: id,
             message: data.message,
             senderId: data.senderId,
             receiverId: data.receiverId
         }
         console.log(formatMessage)
-        io.to('senderId:' + data.senderId).emit('kirimKembali', formatMessage)
-        socket.emit('kirimKembali', formatMessage)
+        io.to(data.senderId).emit('kirimkembali', formatMessage)
+        socket.broadcast.emit('kirimkembali', formatMessage)
+        insertMessage(formatMessage)
+        .then(result => {
+            const resultMessage = result
+            if (resultMessage.length === 0) {
+                console.log('ngga bisa insert')
+            }
+            console.log('bisa insert')
+        })
+        .catch(err => {
+            console.log('ada error? ', err)
+        })
     })
 
     socket.on('disconnect', () => {

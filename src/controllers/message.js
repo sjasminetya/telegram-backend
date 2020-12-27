@@ -1,4 +1,4 @@
-const {insertMessage, receiverMessage, senderMessage} = require('../models/message')
+const {insertMessage, receiverMessage, senderMessage, getAllMessage} = require('../models/message')
 const { v4: uuidv4 } = require('uuid')
 const {response, reject} = require('../helpers/helpers')
 
@@ -43,6 +43,20 @@ exports.senderMessage = (req, res) => {
 exports.receiverMessage = (req, res) => {
     const id = req.params.id
     receiverMessage(id)
+    .then(result => {
+        const resultMessage = result
+        if (resultMessage.length === 0) {
+            return reject(res, {message: 'cant get message'}, 404, null)
+        }
+        response(res, resultMessage, 200, null)
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
+
+exports.getAllMessage = (req, res) => {
+    getAllMessage()
     .then(result => {
         const resultMessage = result
         if (resultMessage.length === 0) {
