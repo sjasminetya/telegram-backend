@@ -15,3 +15,15 @@ exports.receiverMessage = (id) => {
 exports.senderMessage = (id) => {
     return query('SELECT chatmessage.*, users.id, users.name FROM chatmessage INNER JOIN users ON chatmessage.senderId = users.id WHERE senderId = ?', id)
 }
+
+// exports.historyMessage = (senderId, receiverId) => {
+//     return query('SELECT sender.name AS sendername, receiver.name AS receivername, sender.photoProfile, receiver.photoProfile, chatmessage.id, chatmessage.senderId, chatmessage.receiverId, chatmessage.message, chatmessage.time FROM chatmessage INNER JOIN users AS sender ON chatmessage.senderId = sender.id INNER JOIN users AS receiver ON chatmessage.receiverId = receiver.id WHERE chatmessage.senderId = ? AND chatmessage.receiverId = ? ORDER BY chatmessage.time', [senderId, receiverId])
+// }
+
+// exports.historyMessage = (senderId, receiverId) => {
+//     return query('SELECT sender.name AS sendername, receiver.name AS receivername, chatmessage.senderId, chatmessage.receiverId, chatmessage.message, chatmessage.time FROM chatmessage LEFT JOIN users AS sender ON chatmessage.senderId = sender.id LEFT JOIN users AS receiver ON chatmessage.receiverId = receiver.id WHERE (chatmessage.senderId = ? OR chatmessage.receiverId = ?) ORDER BY time', [senderId, receiverId])
+// }
+
+exports.historyMessage = (senderId, receiverId) => {
+    return query(`SELECT sender.name AS sendername, receiver.name AS receivername, chatmessage.senderId, chatmessage.receiverId, chatmessage.message, chatmessage.time FROM chatmessage LEFT JOIN users AS sender ON chatmessage.senderId = sender.id LEFT JOIN users AS receiver ON chatmessage.receiverId = receiver.id WHERE (chatmessage.senderId = '${senderId}' OR chatmessage.senderId = '${receiverId}') AND (chatmessage.receiverId = '${receiverId}' OR chatmessage.receiverId = '${senderId}') ORDER BY chatmessage.time`)
+}

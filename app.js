@@ -17,6 +17,7 @@ const cors = require('cors')
 const routerMain = require('./src/router/index')
 const {insertMessage} = require('./src/models/message')
 const { v4: uuidv4 } = require('uuid')
+const moment = require('moment')
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -32,7 +33,7 @@ io.on('connection', (socket) => {
         console.log(data)
         console.log('id user login ' + data.senderId)
         socket.join(data.senderId)
-        socket.broadcast.to(data.senderId).emit('kirimkembali', `Both: ${data.name} join chat ${data.senderId}`)
+        // socket.broadcast.to(data.senderId)
     })
 
     socket.on('receiverMessage', (data) => {
@@ -42,11 +43,11 @@ io.on('connection', (socket) => {
             id: id,
             message: data.message,
             senderId: data.senderId,
-            receiverId: data.receiverId
+            receiverId: data.receiverId,
+            time: moment(new Date()).format('LT')
         }
         console.log(formatMessage)
-        io.to(data.senderId).emit('kirimkembali', formatMessage)
-        socket.broadcast.emit('kirimkembali', formatMessage)
+        console.log('isi time', formatMessage.time)
         insertMessage(formatMessage)
         .then(result => {
             const resultMessage = result
@@ -58,6 +59,8 @@ io.on('connection', (socket) => {
         .catch(err => {
             console.log('ada error? ', err)
         })
+        io.to(data.senderId).emit('kirimkembali', formatMessage)
+        socket.broadcast.emit('kirimkembali', formatMessage)
     })
 
     socket.on('disconnect', () => {

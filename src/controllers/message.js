@@ -1,6 +1,7 @@
-const {insertMessage, receiverMessage, senderMessage, getAllMessage} = require('../models/message')
+const {insertMessage, receiverMessage, senderMessage, getAllMessage, historyMessage} = require('../models/message')
 const { v4: uuidv4 } = require('uuid')
 const {response, reject} = require('../helpers/helpers')
+const moment = require('moment')
 
 exports.insertMessage = (req, res) => {
     const {senderId, receiverId, message} = req.body
@@ -10,7 +11,7 @@ exports.insertMessage = (req, res) => {
         senderId,
         receiverId,
         message,
-        time: new Date()
+        time: moment(new Date()).format('LT')
     }
     insertMessage(data)
     .then(result => {
@@ -63,6 +64,24 @@ exports.getAllMessage = (req, res) => {
             return reject(res, {message: 'cant get message'}, 404, null)
         }
         response(res, resultMessage, 200, null)
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
+
+exports.historyMessage = (req, res) => {
+    const senderId = req.params.senderId
+    const receiverId = req.params.receiverId
+    historyMessage(senderId, receiverId)
+    .then(result => {
+        console.log(senderId)
+        console.log(receiverId)
+        const resultDataUser = result
+        if (resultDataUser.length === 0) {
+            return reject(res, {message: 'id user not found'}, 404, null)
+        }
+        response(res, resultDataUser, 200, null)
     })
     .catch(err => {
         console.log(err)
