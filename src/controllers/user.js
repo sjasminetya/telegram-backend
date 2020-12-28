@@ -38,18 +38,18 @@ exports.register = async (req, res, next) => {
 
             await register(data)
             try {
-                // jwt.sign({id: data.id, email: data.email}, process.env.SECRET_KEY, {expiresIn: '24h'}, function (err, emailToken) {
-                //     const url = `${process.env.BASE_URL}/users/confirmation/${data.id}/${emailToken}`
-                //     delete data.password
+                jwt.sign({id: data.id, email: data.email}, process.env.SECRET_KEY, {expiresIn: '24h'}, function (err, emailToken) {
+                    const url = `${process.env.BASE_URL}/users/confirmation/${data.id}/${emailToken}`
+                    delete data.password
                     
-                //     transporter.sendMail({
-                //         to: data.email,
-                //         subject: 'Team Telegram Web App, confirmation email',
-                //         html: `please click this link, to confirm your email: <a href="${url}">${url}</a>`
-                //     })
+                    transporter.sendMail({
+                        to: data.email,
+                        subject: 'Team Telegram Web App, confirmation email',
+                        html: `please click this link, to confirm your email: <a href="${url}">${url}</a>`
+                    })
 
-                    return response(res, {message: 'Success register'}, 200, null)
-                // })
+                    return response(res, {message: 'Success register, please check your email to verify'}, 200, null)
+                })
             } catch (err) {
                 console.log(err)
             }
@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
     try {
         const user = get[0]
         if (user !== undefined && user.length !== 0) {
-            // if (user.isActive === 1) return reject(res, null, 401, {error: 'please confirm your email to login'})
+            if (user.isActive === 1) return reject(res, null, 401, {error: 'please confirm your email to login'})
 
             bcrypt.compare(password, user.password, function (err, resCheck) {
                 if (!resCheck) return reject(res, null, 401, {error: 'Login failed, wrong password'})

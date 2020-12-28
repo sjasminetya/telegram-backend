@@ -16,6 +16,7 @@ const PORT = process.env.PORT
 const cors = require('cors')
 const routerMain = require('./src/router/index')
 const {insertMessage} = require('./src/models/message')
+const {update} = require('./src/models/user')
 const { v4: uuidv4 } = require('uuid')
 const moment = require('moment')
 
@@ -59,8 +60,27 @@ io.on('connection', (socket) => {
         .catch(err => {
             console.log('ada error? ', err)
         })
-        io.to(data.senderId).emit('kirimkembali', formatMessage)
-        socket.broadcast.emit('kirimkembali', formatMessage)
+        socket.broadcast.to(data.senderId).emit('kirimkembali', formatMessage)
+        // socket.broadcast.emit('kirimkembali', formatMessage)
+    })
+
+    socket.on('newLocation', (location) => {
+        console.log(location)
+        const updateLocation = {
+            lat: location.lat,
+            lng: location.lng
+        }
+        update(updateLocation, location.id)
+        .then(result => {
+            const resultMessage = result
+            if (resultMessage.length === 0) {
+                console.log('ngga bisa update')
+            }
+            console.log('bisa update')
+        })
+        .catch(err => {
+            console.log('ada error? ', err)
+        })
     })
 
     socket.on('disconnect', () => {
