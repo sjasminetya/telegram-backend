@@ -1,4 +1,4 @@
-const {register, checkUser, update, getFriends, getUserLogin} = require('../models/user')
+const {register, checkUser, update, getFriends, getUserLogin, messageFriends, allUser} = require('../models/user')
 const {response, reject} = require('../helpers/helpers')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -32,6 +32,7 @@ exports.register = async (req, res, next) => {
                 phoneNumber,
                 photoProfile: `${process.env.BASE_URL_IMG}/upload/avatar.jpg`,
                 isActive: 1,
+                status: 1,
                 lat,
                 lng
             }
@@ -147,6 +148,21 @@ exports.getFriends = (req, res) => {
     })
 }
 
+exports.messageFriends = (req, res) => {
+    const id = req.params.id
+    messageFriends(id)
+    .then(result => {
+        const resultDataUser = result
+        if (resultDataUser.length === 0) {
+            return reject(res, {message: 'id not found'}, 404, null)
+        }
+        response(res, resultDataUser, 200, null)
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
+
 exports.getUserLogin = (req, res) => {
     const id = req.params.id
     getUserLogin(id)
@@ -154,6 +170,21 @@ exports.getUserLogin = (req, res) => {
         const resultDataUser = result
         if (resultDataUser.length === 0) {
             return reject(res, {message: 'id user not found'}, 404, null)
+        }
+        response(res, resultDataUser, 200, null)
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
+
+exports.allUser = (req, res) => {
+    const name = req.query.name || null
+    allUser(name)
+    .then(result => {
+        const resultDataUser = result
+        if (resultDataUser === 0) {
+            return reject(res, {message: 'cant get data user'}, 4040, null)
         }
         response(res, resultDataUser, 200, null)
     })

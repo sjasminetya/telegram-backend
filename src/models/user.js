@@ -19,3 +19,11 @@ exports.getUserLogin = (id) => {
 exports.getFriends = (id) => {
     return query('SELECT * FROM users WHERE id != ?', id)
 }
+
+exports.messageFriends = (id) => {
+    return query('SELECT * FROM users WHERE id = ?', id)
+}
+
+exports.allUser = (name) => {
+    return query('SELECT * FROM users WHERE name LIKE ?', `%${name}%`)
+}

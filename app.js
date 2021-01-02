@@ -18,7 +18,6 @@ const routerMain = require('./src/router/index')
 const {insertMessage} = require('./src/models/message')
 const {update} = require('./src/models/user')
 const { v4: uuidv4 } = require('uuid')
-const moment = require('moment')
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -29,7 +28,46 @@ app.use('/upload', express.static('./uploads'))
 // const users = []
 io.on('connection', (socket) => {
     console.log('connection', socket.id)
- 
+    socket.on('online', async userLogin => {
+        const id = userLogin.idUser
+        console.log(id)
+        const status = 'offline'
+        const data = {}
+        if (status) {data.status = status}
+        const updateStatus = {
+            status: 'online'
+        }
+        console.log(updateStatus)
+        await update(updateStatus, id)
+        .then((result) => {
+            const resultMessage = result
+            if (resultMessage.length === 0) {
+                console.log('ngga bisa update status')
+            } 
+            console.log('bisa update status')
+            })
+        .catch((err) => {
+            console.log('ngga bisa update status', err)
+        })
+    })
+
+    socket.on('offline', userLogout => {
+        const id = userLogout.idUser
+        console.log('id logout', id)
+        const updateStatus = {
+            status: 'offline'
+        }
+        console.log(updateStatus)
+        update(updateStatus, id)
+        .then((result) => {
+            const resultMessage = result
+            if (resultMessage.length === 0) {
+                console.log('ngga bisa update status')
+            } 
+            console.log('bisa update status')
+            })
+    })
+
     socket.on('initialUser', (data) => {
         console.log(data)
         console.log('id user login ' + data.senderId)
@@ -45,7 +83,7 @@ io.on('connection', (socket) => {
             message: data.message,
             senderId: data.senderId,
             receiverId: data.receiverId,
-            time: moment(new Date()).format('LT')
+            time: new Date()
         }
         console.log(formatMessage)
         console.log('isi time', formatMessage.time)
@@ -60,7 +98,9 @@ io.on('connection', (socket) => {
         .catch(err => {
             console.log('ada error? ', err)
         })
-        socket.broadcast.to(data.senderId).emit('kirimkembali', formatMessage)
+        io.to(data.senderId).emit('kirimkembali', formatMessage)
+        socket.broadcast.emit('notificationMessage', data)
+        // io.to(data.senderId).emit('kirimkembali', formatMessage)
         // socket.broadcast.emit('kirimkembali', formatMessage)
     })
 
@@ -75,7 +115,7 @@ io.on('connection', (socket) => {
             const resultMessage = result
             if (resultMessage.length === 0) {
                 console.log('ngga bisa update')
-            }
+            } 
             console.log('bisa update')
         })
         .catch(err => {
