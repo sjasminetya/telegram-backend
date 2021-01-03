@@ -1,4 +1,4 @@
-const {insertMessage, receiverMessage, senderMessage, getAllMessage, historyMessage} = require('../models/message')
+const {insertMessage, getAllMessage, historyMessage} = require('../models/message')
 const { v4: uuidv4 } = require('uuid')
 const {response, reject} = require('../helpers/helpers')
 
@@ -42,7 +42,7 @@ exports.getAllMessage = (req, res) => {
 exports.historyMessage = (req, res) => {
     const senderId = req.params.senderId
     const receiverId = req.params.receiverId
-    const limit = parseInt(req.query.limit) || 10
+    const limit = parseInt(req.query.limit) || 20
     historyMessage(senderId, receiverId, limit)
     .then(result => {
         console.log(senderId)
