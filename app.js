@@ -77,6 +77,7 @@ io.on('connection', (socket) => {
         console.log(data)
         console.log('id user login ' + data.senderId)
         socket.join(data.senderId)
+
         // socket.broadcast.to(data.senderId)
     })
 
@@ -112,8 +113,10 @@ io.on('connection', (socket) => {
         .catch(err => {
             console.log('ada error? ', err)
         })
+        // io.to(data.senderId).emit('kirimkembali', formatMessage)
         io.to(data.senderId).emit('kirimkembali', formatMessage)
-        socket.broadcast.emit('notificationMessage', data)
+        socket.to(data.receiverId).emit('kirimkembali', formatMessage)
+        socket.broadcast.to(data.receiverId).emit('notificationMessage', data)
         // io.to(data.senderId).emit('kirimkembali', formatMessage)
         // socket.broadcast.emit('kirimkembali', formatMessage)
     })
