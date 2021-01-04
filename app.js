@@ -77,21 +77,20 @@ io.on('connection', (socket) => {
         console.log(data)
         console.log('id user login ' + data.senderId)
         socket.join(data.senderId)
-
-        // socket.broadcast.to(data.senderId)
     })
 
     //user join group
-    socket.on('inital-user-join-group', data => {
-        console.log(data)
-        console.log('room:' + data.nameRoom)
-        socket.join('room:' + data.nameRoom)
-        socket.broadcast.to('room:' + data.nameRoom).emit('send-to-client', `Both: ${data.senderName} join room ${data.nameRoom}`)
-    })
+    // socket.on('inital-user-join-group', data => {
+    //     console.log(data)
+    //     console.log('room:' + data.nameRoom)
+    //     socket.join('room:' + data.nameRoom)
+    //     socket.broadcast.to('room:' + data.nameRoom).emit('send-to-client', `Both: ${data.senderName} join room ${data.nameRoom}`)
+    // })
 
     //private chat
     socket.on('receiverMessage', (data) => {
         console.log(data)
+        // callback(data)
         const id = uuidv4()
         const formatMessage = {
             id: id,
@@ -113,10 +112,9 @@ io.on('connection', (socket) => {
         .catch(err => {
             console.log('ada error? ', err)
         })
-        // io.to(data.senderId).emit('kirimkembali', formatMessage)
         io.to(data.senderId).emit('kirimkembali', formatMessage)
+        // io.to(data.receiverId).emit('kirimkembali', formatMessage)
         socket.to(data.receiverId).emit('kirimkembali', formatMessage)
-        socket.broadcast.to(data.receiverId).emit('notificationMessage', data)
         // io.to(data.senderId).emit('kirimkembali', formatMessage)
         // socket.broadcast.emit('kirimkembali', formatMessage)
     })
