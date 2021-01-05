@@ -32,7 +32,7 @@ exports.register = async (req, res, next) => {
                 phoneNumber,
                 photoProfile: `${process.env.BASE_URL_IMG}/upload/avatar.jpg`,
                 isActive: 1,
-                status: 1,
+                status: 'offline',
                 lat,
                 lng
             }

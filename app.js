@@ -33,7 +33,6 @@ io.on('connection', (socket) => {
     //status online
     socket.on('online', async userLogin => {
         const id = userLogin.idUser
-        console.log(id)
         const status = 'offline'
         const data = {}
         if (status) {data.status = status}
@@ -57,7 +56,6 @@ io.on('connection', (socket) => {
     //status offline
     socket.on('offline', userLogout => {
         const id = userLogout.idUser
-        console.log('id logout', id)
         const updateStatus = {
             status: 'offline'
         }
@@ -74,18 +72,9 @@ io.on('connection', (socket) => {
 
     //user login
     socket.on('initialUser', (data) => {
-        console.log(data)
         console.log('id user login ' + data.senderId)
         socket.join(data.senderId)
     })
-
-    //user join group
-    // socket.on('inital-user-join-group', data => {
-    //     console.log(data)
-    //     console.log('room:' + data.nameRoom)
-    //     socket.join('room:' + data.nameRoom)
-    //     socket.broadcast.to('room:' + data.nameRoom).emit('send-to-client', `Both: ${data.senderName} join room ${data.nameRoom}`)
-    // })
 
     //private chat
     socket.on('receiverMessage', (data) => {
@@ -113,37 +102,8 @@ io.on('connection', (socket) => {
             console.log('ada error? ', err)
         })
         io.to(data.senderId).emit('kirimkembali', formatMessage)
-        // io.to(data.receiverId).emit('kirimkembali', formatMessage)
         socket.to(data.receiverId).emit('kirimkembali', formatMessage)
-        // io.to(data.senderId).emit('kirimkembali', formatMessage)
-        // socket.broadcast.emit('kirimkembali', formatMessage)
     })
-
-    //group chat
-    // socket.on('send-message', (data) => {
-    //     console.log('message from client', data)
-    //     // callback(data.message)
-    //     const id = uuidv4()
-    //     const message = {
-    //         id: id,
-    //         senderId: data.senderId,
-    //         message: data.message,
-    //         time: new Date()
-    //     }
-    //     console.log('insert', message)
-    //     insertMessageGroup(message)
-    //     .then(result => {
-    //         const resultMessage = result
-    //         if (resultMessage.length === 0) {
-    //             console.log('ngga bisa insert')
-    //         }
-    //         console.log('bisa insert')
-    //     })
-    //     .catch(err => {
-    //         console.log(err)
-    //     })
-    //     io.to('room:' + data.nameRoom).emit('send-to-client', message)
-    // })
 
     //location
     socket.on('newLocation', (location) => {
