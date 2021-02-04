@@ -24,8 +24,8 @@ Create .env file in your root project folder.
 ```
 PORT = 5200
 
-DB_HOST = localhost
-DB_USER = root
+DB_HOST = 
+DB_USER = 
 DB_PASSWORD
 DB_NAME = telegram
 
