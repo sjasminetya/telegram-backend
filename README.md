@@ -18,6 +18,7 @@ git clone https://github.com/sjasminetya/telegram-backend.git
 * **[Node JS](https://nodejs.org/en/download/)**
 * **[Postman](https://www.postman.com/) => for testing**
 * **[Database](https://github.com/sjasminetya/telegram-backend/blob/main/telegram.sql) => export database**
+* **[Frontend Telegram](https://github.com/sjasminetya/telegram-frontend)**
 
 ### Add env
 Create .env file in your root project folder.
