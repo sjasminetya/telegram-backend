@@ -1,4 +1,4 @@
-const {insertMessage, getAllMessage, historyMessage} = require('../models/message')
+const {insertMessage, getAllMessage, historyMessage, deleteHistoryMessage, lastMessage} = require('../models/message')
 const { v4: uuidv4 } = require('uuid')
 const {response, reject} = require('../helpers/helpers')
 
@@ -50,6 +50,39 @@ exports.historyMessage = (req, res) => {
         const resultDataUser = result
         if (resultDataUser.length === 0) {
             return reject(res, {message: 'id user not found'}, 404, null)
+        }
+        response(res, resultDataUser, 200, null)
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
+
+exports.deleteHistoryMessage = (req, res) => {
+    const senderId = req.params.senderId
+    const receiverId = req.params.receiverId
+    deleteHistoryMessage(senderId, receiverId)
+    .then(result => {
+        console.log(senderId)
+        console.log(receiverId)
+        const resultDataUser = result
+        if (resultDataUser.length === 0) {
+            return reject(res, {message: 'cant delete'}, 404, null)
+        }
+        response(res, {message: 'success delete'}, 200, null)
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
+
+exports.lastMessage = (req, res) => {
+    const senderId = req.params.senderId
+    lastMessage(senderId)
+    .then(result => {
+        const resultDataUser = result
+        if (resultDataUser.length === 0) {
+            return reject(res, {message: 'cant get'}, 404, null)
         }
         response(res, resultDataUser, 200, null)
     })
