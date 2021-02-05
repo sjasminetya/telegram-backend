@@ -24,12 +24,12 @@ exports.register = async (req, res, next) => {
         bcrypt.hash(password, salt, async function (err, hash) {
             const data = {
                 id,
-                username,
+                username: 'username',
                 name,
                 email,
                 password: hash,
-                bio,
-                phoneNumber,
+                bio: 'bio',
+                phoneNumber: 081,
                 photoProfile: `${process.env.BASE_URL_IMG}/upload/avatar.jpg`,
                 isActive: 1,
                 status: 'offline',
@@ -45,8 +45,45 @@ exports.register = async (req, res, next) => {
                     
                     transporter.sendMail({
                         to: data.email,
-                        subject: 'Team Telegram Web App, confirmation email',
-                        html: `please click this link, to confirm your email: <a href="${url}">${url}</a>`
+                        subject: 'Team Telegram Web App, confirm your email',
+                        html: `<!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Document</title>
+                            <style>
+                                  .container {
+                                      color: #000;
+                                  }
+                                  button {
+                                      width: 200px;
+                                      height: 70px;
+                                      background-color: #6379F4;
+                                      border-radius: 10px;
+                                      border: none;
+                                      color: #ffffff !important;
+                                  }
+                                  button a {
+                                      text-decoration: none;
+                                      color: #fff !important;
+                                  }
+                                  button:hover {
+                                      outline: none;
+                                  }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="text-email">
+                                  <p>You recently register into Telegram App. Please click this link to activation your account</p>
+                                  <button><a href="${url}">Activation your account</a></button>
+                                  <p>Thanks,<br>Telegram Team</p>
+                                  <p>P.S. We also love hearing from you and helping you with any issues yo have. Please reply to this email if you want to ask a question or just say hi.</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>`
                     })
 
                     return response(res, {message: 'Success register, please check your email to verify'}, 200, null)
